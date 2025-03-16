@@ -165,3 +165,9 @@ To work within the Poetry-managed virtual environment, you can:
 ```
 fd -H -t f --exclude '.git' --exclude 'poetry.lock' -0 | xargs -0 -I {} sh -c 'echo "File: {}"; cat {}'
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Nestor Urquiza
