@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "score-to-music"
-version = "0.1.0"
-description = "A tool to convert music scores into audio files using custom soundfonts."
+version = "0.2.0"
+description = "A tool to convert music scores into audio files using custom soundfonts and multiple instruments."
 authors = ["Nestor Urquiza <nestor.urquiza@gmail.com>"]
 readme = "README.md"
 packages = [{ include = "score_to_music" }]
@@ -16,6 +16,7 @@ rich = "^13.7.0"
 pydantic = "^2.5.0"
 lxml = "^4.9.3"  # For XML processing
 requests = "^2.31.0"  # For API integrations
+sf2utils = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
@@ -29,7 +30,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-score2music = "score_to_music.score2music:cli"
+score2music = "score_to_music.cli:cli"
 
 [tool.black]
 line-length = 88

@@ -6,6 +6,7 @@ This project converts music scores into audio files using specified SoundFonts, 
   - Digital score formats (MusicXML, MuseScore)
   - MIDI files (with conversion to MusicXML)
 - **Customizable instrument sounds** via SoundFont files
+- **Multi-instrument support** for creating orchestral arrangements
 - **Instrument selection** using MIDI program numbers
 - **High-quality audio synthesis** with FluidSynth
 - **Audio compression** to MP3 or AAC formats
@@ -70,6 +71,7 @@ You need a SoundFont (.sf2) file for the instrument sounds. Some options:
 ## Usage
 Convert a score to audio with a single command:
 
+### Single Instrument
 ```
 poetry run score2music <score_file_path> <soundfont_sf2_file_path> <media_file_path> [--instrument PROGRAM_NUMBER]
 ```
@@ -82,6 +84,35 @@ poetry run score2music "Bach_BWV_733.mxl" "GeneralUser_GS.sf2" "Bach_BWV_733.mp3
 To render with a guitar sound (program 24):
 ```
 poetry run score2music "Bach_BWV_733.mxl" "GeneralUser_GS.sf2" "Bach_BWV_733_guitar.mp3" --instrument 24
+```
+
+### Multiple Instruments (Orchestra Mode)
+New in this version: you can now specify multiple instruments to create orchestral arrangements!
+Use comma-separated values to specify multiple instruments:
+
+```
+poetry run score2music <score_file_path> <soundfont_sf2_file_path> <media_file_path> -i <program_number_1>,<program_number_2>,...
+```
+
+For example, to create a string quartet:
+```
+poetry run score2music "Bach_BWV_733.mxl" "GeneralUser_GS.sf2" "Bach_BWV_733_quartet.mp3" -i 40,41,42,43
+```
+
+This combines Violin (40), Viola (41), Cello (42), and Contrabass (43).
+
+For a full orchestra arrangement:
+```
+poetry run score2music "Bach_BWV_733.mxl" "GeneralUser_GS.sf2" "Bach_BWV_733_orchestra.mp3" -i 0,40,41,42,56,60,68,71,73
+```
+
+This combines Piano, Violin, Viola, Cello, Trumpet, French Horn, Oboe, Clarinet, and Flute.
+
+### View Available Instruments
+To see a list of all available MIDI program numbers and instrument names:
+
+```
+poetry run score2music --list-instruments
 ```
 
 ### Common MIDI Program Numbers
@@ -115,12 +146,14 @@ For a complete list of MIDI program numbers, see the [General MIDI specification
 
 2. **Instrument Adaptation**:
    - The score is prepared for playback
-   - All parts are combined into a single playable part
-   - The specified instrument program is applied
+   - Each instrument is assigned to a separate track
+   - When multiple instruments are specified, parts are assigned intelligently
+   - Each instrument track uses the specified MIDI program
 
 3. **Audio Generation**:
-   - Creates MIDI from the adapted score
-   - Synthesizes audio using FluidSynth with the specified SoundFont and instrument
+   - Creates MIDI tracks for each instrument
+   - Synthesizes audio for each instrument using FluidSynth with the specified SoundFont
+   - Mixes all instrument tracks together
    - Compresses to MP3 or AAC based on file extension
 
 ## Troubleshooting
@@ -133,6 +166,10 @@ For a complete list of MIDI program numbers, see the [General MIDI specification
   - If the specified instrument doesn't sound right, ensure your SoundFont includes that instrument
   - Some SoundFonts only include a limited set of instruments
   - For full instrument support, use a complete General MIDI SoundFont
+- **Multi-instrument Mode**:
+  - The program will intelligently assign instruments to available parts in the score
+  - If there are more instruments than parts, some instruments will play all parts
+  - For best results, match the number of instruments to the number of parts in the score
 - **AAC Output Issues**:
   - For AAC audio, use .m4a extension instead of .aac for better compatibility
   - If AAC encoding fails, try MP3 format or manually convert using FFmpeg
